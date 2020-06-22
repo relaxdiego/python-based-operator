@@ -1,0 +1,18 @@
+# Python files
+.venv
+*.egg-info
+
+# MacOS files
+.DS_Store
+
+# Common backup files
+*.swp
+*.bak
+*.tmp
+*~
+
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/
