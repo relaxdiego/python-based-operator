@@ -25,7 +25,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            '{0} = {0}.cli:main'.format(_NAME),
+            '{0} = {0}.operator:main'.format(_NAME),
         ]
     }
 )
