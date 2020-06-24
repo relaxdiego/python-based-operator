@@ -50,6 +50,7 @@ helm install --atomic \
 helm uninstall <name-of-this-prometheus-operator>
 ```
 
+
 ## Development Guide
 
 #### Dependencies
@@ -61,7 +62,7 @@ TIP: Make your life easier by using [pyenv](https://github.com/pyenv/pyenv-insta
 #### Prepare Your Virtualenv
 
 ```
-python3 -m venv --promp prometheus-operator .venv
+python3 -m venv --prompt prometheus-operator .venv
 source .venv/bin/activate
 ```
 
@@ -115,4 +116,5 @@ git commit -m "Add a-dependency to requirements.txt"
 git push origin
 ```
 
-Then install the dev dependencies using `pip-sync` as illustrated above.
+Then install the dev dependencies using `pip-sync` as illustrated above
+since the dev dependencies import the runtime dependency requirements.
