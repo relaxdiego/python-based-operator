@@ -25,6 +25,7 @@ microk8s.enable helm3
 
 ## Usage
 
+
 #### Build the Container Image
 
 ```
@@ -34,6 +35,7 @@ docker push <your-docker-hub-username>/prometheus-operator
 
 NOTE: If you prefer to push your image to a private container repo and
       you have access to one, then feel free use that instead.
+
 
 #### Deploy the Operator
 
@@ -53,11 +55,13 @@ helm uninstall <name-of-this-prometheus-operator>
 
 ## Development Guide
 
+
 #### Dependencies
 
 1. Python 3.8.x or higher
 
 TIP: Make your life easier by using [pyenv](https://github.com/pyenv/pyenv-installer)
+
 
 #### Prepare Your Virtualenv
 
@@ -68,42 +72,44 @@ source .venv/bin/activate
 
 TIP: Make your life easier by using [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv)
 
+
 #### Install Development Dependencies For the First Time
 
 ```
 python3 -m pip install --upgrade pip
 python3 -m pip install "pip-tools>=5.2.1,<5.3"
-pip-sync dev-requirements.txt --pip-args '--require-hashes'
+pip-sync dev-requirements.txt requirements.txt
 ```
 
 #### Subsequent Installation of Development Dependencies
 
 ```
-pip-sync dev-requirements.txt --pip-args '--require-hashes'
+pip-sync dev-requirements.txt requirements.txt
 ```
 
 #### When Adding a Development Dependency
 
 ```
-echo 'a-dependency==1.0.0' >> dev-requirements.in
+echo 'foo==1.0.0' >> dev-requirements.in
 pip-compile --generate-hashes dev-requirements.in
 ```
 
-The `dev-requirements.txt` file should now be updated. Make sure to commit
+The `dev-requirements.txt` file should now be updated.Make sure to commit
 that to the repo:
 
 ```
 git add dev-requirements.*
-git commit -m "Add a-dependency to dev-requirements.txt"
+git commit -m "Add foo to dev-requirements.txt"
 git push origin
 ```
 
-Then install the dev dependencies using `pip-sync` as illustrated above.
+Then install the dev dependencies using `pip-sync` as shown above.
+
 
 #### When Adding a Runtime Dependency
 
 ```
-echo 'a-dependency==1.0.0' >> requirements.in
+echo 'bar==1.0.0' >> requirements.in
 pip-compile --generate-hashes requirements.in
 ```
 
@@ -112,9 +118,8 @@ that to the repo:
 
 ```
 git add requirements.*
-git commit -m "Add a-dependency to requirements.txt"
+git commit -m "Add bar to requirements.txt"
 git push origin
 ```
 
-Then install the dev dependencies using `pip-sync` as illustrated above
-since the dev dependencies import the runtime dependency requirements.
+Then install the dev dependencies using `pip-sync` as shown above.
