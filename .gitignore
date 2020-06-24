@@ -1,6 +1,7 @@
 # Python files
 .venv
 *.egg-info
+__pycache__
 
 # MacOS files
 .DS_Store
