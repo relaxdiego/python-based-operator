@@ -92,11 +92,11 @@ pip-sync dev-requirements.txt requirements.txt
 
 ```
 echo 'foo==1.0.0' >> dev-requirements.in
-pip-compile --generate-hashes dev-requirements.in
+pip-compile dev-requirements.in
 ```
 
 The `dev-requirements.txt` file should now be updated.Make sure to commit
-that to the repo:
+both files to the repo:
 
 ```
 git add dev-requirements.*
@@ -111,11 +111,11 @@ Then install the dev dependencies using `pip-sync` as shown above.
 
 ```
 echo 'bar==1.0.0' >> requirements.in
-pip-compile --generate-hashes requirements.in
+pip-compile requirements.in
 ```
 
 The `requirements.txt` file should now be updated. Make sure to commit
-that to the repo:
+both files to the repo:
 
 ```
 git add requirements.*
@@ -128,16 +128,21 @@ Then install the dev dependencies using `pip-sync` as shown above.
 
 #### Trying Your Changes on Microk8s
 
+First, make sure you enable a few important addons:
+
+```
+microk8s.enable dns helm3 ingress registry storage
+```
+
 Build and deploy your work to your local microk8s cluster:
 
 ```
-make operator tag=<your-registry-hostname>/<your-namespace>/<image-tag>
+make operator tag=<your-docker-hub-username>/prometheus-operator
 ```
 
-If you want to keep it simple, just use Docker hub:
+NOTE: If you prefer to push your image to a private container repo and
+      you have access to one, then feel free use that instead.
 
-```
-make operator tag=<your-dockerhub-usernae>/prometheus-operator
 ```
 
 To uninstall, run:
