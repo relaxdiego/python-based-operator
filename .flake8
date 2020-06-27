@@ -1,0 +1,3 @@
+# https://flake8.pycqa.org/en/2.6.0/config.html
+[flake8]
+max-line-length = 88
