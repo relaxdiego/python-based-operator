@@ -24,7 +24,7 @@ def main():
         w = watch.Watch()
 
         log.debug("Watching pod events in all namespaces")
-        for event in w.stream(v1.list_pod_for_all_namespaces, timeout_seconds=10):
+        for event in w.stream(v1.list_pod_for_all_namespaces):
             log.debug("Event: %s %s %s" % (
                 event['type'],
                 event['object'].kind,
