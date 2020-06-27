@@ -16,7 +16,7 @@ more-itertools==8.4.0     # via pytest
 oauthlib==3.1.0           # via -c requirements.txt, requests-oauthlib
 packaging==20.4           # via pytest
 pluggy==0.13.1            # via pytest
-py==1.8.2                 # via pytest
+py==1.9.0                 # via pytest
 pyasn1-modules==0.2.8     # via -c requirements.txt, google-auth
 pyasn1==0.4.8             # via -c requirements.txt, pyasn1-modules, rsa
 pyparsing==2.4.7          # via packaging
@@ -28,7 +28,7 @@ requests==2.24.0          # via -c requirements.txt, kubernetes, requests-oauthl
 rsa==4.6                  # via -c requirements.txt, google-auth
 six==1.15.0               # via -c requirements.txt, google-auth, kubernetes, packaging, python-dateutil, websocket-client
 urllib3==1.25.9           # via -c requirements.txt, kubernetes, requests
-wcwidth==0.2.4            # via pytest
+wcwidth==0.2.5            # via pytest
 websocket-client==0.57.0  # via -c requirements.txt, kubernetes
 
 # The following packages are considered to be unsafe in a requirements file:

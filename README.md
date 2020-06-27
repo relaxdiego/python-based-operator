@@ -71,7 +71,11 @@ python3 -m venv --prompt prometheus-operator .venv
 source .venv/bin/activate
 ```
 
-TIP: Make your life easier by using [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv)
+TIP: Make your life easier by using [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv):
+
+```
+pyenv virtualenv 3.8.3 prometheus-operator-3.8.3
+```
 
 
 #### Install Development Dependencies For the First Time
@@ -79,24 +83,24 @@ TIP: Make your life easier by using [pyenv-virtualenv](https://github.com/pyenv/
 ```
 python3 -m pip install --upgrade pip
 python3 -m pip install "pip-tools>=5.2.1,<5.3"
-pip-sync dev-requirements.txt requirements.txt
+make dependencies
 ```
 
 #### Subsequent Installation of Development Dependencies
 
 ```
-pip-sync dev-requirements.txt requirements.txt
+make dependencies
 ```
 
 #### When Adding a Development Dependency
 
 ```
-echo 'foo==1.0.0' >> dev-requirements.in
-pip-compile dev-requirements.in
+echo 'foo' >> dev-requirements.in
+make dependencies
 ```
 
-The `dev-requirements.txt` file should now be updated.Make sure to commit
-both files to the repo:
+The `dev-requirements.txt` file should now be updated. Make sure to commit
+both files to the repo to let your teammates know of the new dependency.
 
 ```
 git add dev-requirements.*
@@ -104,26 +108,42 @@ git commit -m "Add foo to dev-requirements.txt"
 git push origin
 ```
 
-Then install the dev dependencies using `pip-sync` as shown above.
-
 
 #### When Adding a Runtime Dependency
 
+Add it to the `install_requires` argument of the `setup()` call. For example:
+
 ```
-echo 'bar==1.0.0' >> requirements.in
-pip-compile requirements.in
+setup(
+    name=_NAME,
+    version='0.1.0',
+
+    ...
+
+    install_requires=[
+        'kubernetes',
+        'bar'
+    ],
+
+    ...
+
+)
+```
+
+After having added the `bar` dependency above, run the following:
+
+```
+make dependencies
 ```
 
 The `requirements.txt` file should now be updated. Make sure to commit
-both files to the repo:
+both files to the repo to let your teammates know of the new dependency.
 
 ```
-git add requirements.*
-git commit -m "Add bar to requirements.txt"
+git add setup.py requirements.txt
+git commit -m "Add bar as a runtime dependency"
 git push origin
 ```
-
-Then install the dev dependencies using `pip-sync` as shown above.
 
 
 #### Trying Your Changes on Microk8s
@@ -143,10 +163,23 @@ make operator tag=<your-docker-hub-username>/prometheus-operator
 NOTE: If you prefer to push your image to a private container repo and
       you have access to one, then feel free use that instead.
 
-```
 
 To uninstall, run:
 
 ```
 make clean
 ```
+
+
+#### Force Re-Install Depedencies and Uninstall the Operator
+
+Run the following
+
+```
+make clean-all
+make dependencies
+```
+
+If you want something more thorough (and potentially destructive) than that,
+delete your virtual environment. Then start from the beginning of the
+Development Guide section.
