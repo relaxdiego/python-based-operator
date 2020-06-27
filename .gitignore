@@ -17,3 +17,6 @@ __pycache__
 .idea/
 *.tmproj
 .vscode/
+
+# Make files
+.last-*

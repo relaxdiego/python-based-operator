@@ -11,6 +11,7 @@ This project was inspired by https://link.medium.com/rC0Nqcrgw7
 1. Kubernetes 1.18 or higher
 2. Helm 3
 3. Docker CE
+4. GNU Make
 
 
 ## Make Your Life Easier
@@ -123,3 +124,24 @@ git push origin
 ```
 
 Then install the dev dependencies using `pip-sync` as shown above.
+
+
+#### Trying Your Changes on Microk8s
+
+Build and deploy your work to your local microk8s cluster:
+
+```
+make operator tag=<your-registry-hostname>/<your-namespace>/<image-tag>
+```
+
+If you want to keep it simple, just use Docker hub:
+
+```
+make operator tag=<your-dockerhub-usernae>/prometheus-operator
+```
+
+To uninstall, run:
+
+```
+make clean
+```
