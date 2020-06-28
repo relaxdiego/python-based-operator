@@ -161,13 +161,24 @@ make operator tag=<your-docker-hub-username>/prometheus-operator
 ```
 
 NOTE: If you prefer to push your image to a private container repo and
-      you have access to one, then feel free use that instead.
+      you have access to one, then feel free use that instead. If you're
+      using microk8s with the registry addon enabled, then you can use
+      tag=localhost:32000/prometheus-operator.
 
 
 To uninstall, run:
 
 ```
 make clean
+```
+
+You can optionally deploy the operator to its own namespace (recommended).
+For example, if you want to deploy to a namespace named prometheus-operator
+in a microk8s cluster with its registry addon enabled, run:
+
+```
+microk8s.kubectl create ns prometheus-operator
+make operator tag=localhost:32000/prometheus-operator ns=prometheus-operator
 ```
 
 

@@ -4,6 +4,7 @@ metadata:
   name: {{ include "prometheus-operator.fullname" . }}
   labels:
     {{- include "prometheus-operator.labels" . | nindent 4 }}
+    relaxdiego.com: prometheus-operator
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:

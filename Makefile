@@ -3,10 +3,13 @@
 
 CHART_RELEASE_NAME := dev-9095562
 
+ns ?= default
+namespace ?= $(ns)
+
 
 clean:
+	@if microk8s.helm3 status --namespace=$(namespace) ${CHART_RELEASE_NAME} 1>/dev/null 2>&1 ; then microk8s.helm3 uninstall --namespace=$(namespace) ${CHART_RELEASE_NAME}; else echo 'Operator is not running in the $(namespace) namespace. Ignoring.'; exit 1; fi
 	rm -f .last-helm-install .last-make-operator-run
-	@if microk8s.helm3 status ${CHART_RELEASE_NAME} 1>/dev/null 2>&1 ; then microk8s.helm3 uninstall ${CHART_RELEASE_NAME}; else echo 'Operator is not running. Ignoring.'; fi
 
 clean-all: clean
 	rm -f .last-*
@@ -19,7 +22,7 @@ operator: .last-helm-install
 
 .last-helm-install: .last-docker-push
 	@if [ -z $(tag) ]; then echo; echo "tag argument is missing. See README for guidance"; echo; exit 1; fi
-	microk8s.helm3 install --atomic --set image.repository=$(tag) ${CHART_RELEASE_NAME} helm/ | tee .last-helm-install
+	microk8s.helm3 install --atomic --set image.repository=$(tag) --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ | tee .last-helm-install
 
 .last-docker-push: .last-docker-build
 	docker push $(tag) | tee .last-docker-push

@@ -1,0 +1,82 @@
+# References
+# 1. Guide:
+#    https://kubernetes.io/docs/tasks/extend-kubernetes/custom-resources/custom-resource-definitions/
+#
+# 2. API Reference:
+#    https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#customresourcedefinition-v1-apiextensions-k8s-io
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  # name must match the spec fields below, and be in the form: <plural>.<group>
+  name: prometheusclusters.relaxdiego.com
+  labels:
+    relaxdiego.com: prometheus-operator
+spec:
+  # group name to use for REST API: /apis/<group>/<version>
+  group: relaxdiego.com
+  # either Namespaced or Cluster
+  scope: Namespaced
+  names:
+    # plural name to be used in the URL: /apis/<group>/<version>/<plural>
+    plural: prometheusclusters
+    # singular name to be used as an alias on the CLI and for display
+    singular: prometheuscluster
+    # kind is normally the CamelCased singular type. Your resource manifests use this.
+    kind: PrometheusCluster
+    # shortNames allow shorter string to match your resource on the CLI
+    shortNames:
+    - proms
+    - promcluster
+    - promclusters
+    - prometheuses
+    - prometheis
+  # list of versions supported by this CustomResourceDefinition
+  versions:
+    - name: v1alpha1
+      # Each version can be enabled/disabled by Served flag.
+      served: true
+      # Indicates whether this version should be used when persisting custom
+      # resources to storage. One and only one version must be marked as
+      # the storage version.
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          required:
+            - spec
+          properties:
+            # This is just a JSON Schema spec. Not too comfy with JSON Schemas?
+            # Here's a starter: https://json-schema.org/learn/getting-started-step-by-step.html
+            spec:
+              type: object
+              required:
+                - config
+              properties:
+                config:
+                  type: string
+                  description: Raw prometheus configuration file contents. See the official Prometheus documentation at https://prometheus.io/docs/prometheus/latest/configuration/configuration
+                instances:
+                  type: integer
+                  default: 1
+                  minimum: 1
+                  description: The number of instances you want running
+      #       status:
+      #         type: object
+      #         properties:
+      #           replicas:
+      #             type: integer
+      #           labelSelector:
+      #             type: string
+      # # subresources describes the subresources for custom resources.
+      # # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#customresourcesubresources-v1-apiextensions-k8s-io
+      # subresources:
+      #   # status enables the status subresource.
+      #   status: {}
+      #   # scale enables the scale subresource.
+      #   scale:
+      #     # specReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Spec.Replicas.
+      #     specReplicasPath: .spec.replicas
+      #     # statusReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Replicas.
+      #     statusReplicasPath: .status.replicas
+      #     # labelSelectorPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Selector.
+      #     labelSelectorPath: .status.labelSelector
