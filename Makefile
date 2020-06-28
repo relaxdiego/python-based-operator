@@ -16,7 +16,7 @@ clean-all: clean
 
 image: .last-docker-push
 
-dev-operator:
+dev-operator: dependencies
 	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running in dev mode. Run 'make clean' first to uninstall"; echo; exit 1; fi
 	microk8s.helm3 install --atomic --set dev=true --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ | tee .last-helm-install
 	touch .last-make-operator-run
