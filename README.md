@@ -47,6 +47,15 @@ helm install --atomic \
   helm/
 ```
 
+#### Need Some Sample PrometheusCluster manifests?
+
+There's some under the `examples/` directory. After deploying the operator,
+create some sample PrometheusClusters via the usual kubectl command:
+
+```
+kubectl apply -f examples/simple.yaml
+```
+
 #### Clean Up
 
 ```
@@ -180,6 +189,42 @@ in a microk8s cluster with its registry addon enabled, run:
 microk8s.kubectl create ns prometheus-operator
 make operator tag=localhost:32000/prometheus-operator ns=prometheus-operator
 ```
+
+
+#### A Faster Development Workflow
+
+After some time, it can get very tiring to test your code in a live environment
+by running `make operator ...` then `make clean` then `make operator ...` again
+ad nauseam. This is especially annoying if all you're doing is change one or
+two lines of code in between `make operator` and `make clean`. To make this
+process a little bit easier, there's `make dev-operator`.
+
+To get this to work, first make sure you have your `~/.kube/config` set up properly
+to point to your target cluster. It's best that you use microk8s here to keep
+things easy:
+
+```
+mkdir -p ~/.kube
+microk8s.config > ~/.kube/config
+```
+
+Next deploy the operator in dev mode:
+
+```
+make dev-operator
+```
+
+Finally, run the operator locally
+
+```
+prometheus_operator
+```
+
+You should see logs starting to stream in to stdout at this point. If you want
+to make changes to the python code, make those changes, save them, then kill
+and rerun `prometheus_operator`
+
+To clean up, use the same `make clean` command. Enjoy!
 
 
 #### Force Re-Install Depedencies and Uninstall the Operator

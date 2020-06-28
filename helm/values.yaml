@@ -19,6 +19,13 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name:
 
+# Indicates whether to deploy in dev mode or not. If set to true, Helm3 will
+# deploy everything but the operator itself. This will allow you to run the
+# operator locally for a faster development workflow by not requiring your to
+# run make clean and make operator everytime. For more information, see the
+# "A Faster Development Workflow" section of the README.
+dev: false
+
 podSecurityContext: {}
   # fsGroup: 2000
 

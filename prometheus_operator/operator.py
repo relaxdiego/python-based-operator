@@ -1,4 +1,7 @@
 import logging
+import os
+from pathlib import Path
+import sys
 import time
 
 from kubernetes import (
@@ -16,9 +19,20 @@ def main():
     logs.configure()
     log = logging.getLogger(__name__)
 
-    log.debug("Loading kube config")
-    config.load_incluster_config()
+    user_kubeconfig = Path(os.path.expanduser("~")).joinpath('.kube', 'config')
 
+    if user_kubeconfig.exists():
+        log.debug("Loading user kube config")
+        config.load_kube_config()
+    else:
+        log.debug("Loading in-cluster kube config")
+        try:
+            config.load_incluster_config()
+        except config.ConfigException:
+            log.error("Unable to load in-cluster config file. Exiting.")
+            sys.exit(1)
+
+    log.debug("Loading CustomObjectsApi client")
     # https://github.com/kubernetes-client/python/blob/master/kubernetes/client/api/apiextensions_v1_api.py
     coa_client = client.CustomObjectsApi()
 
@@ -27,8 +41,8 @@ def main():
         crd_name = 'prometheusclusters'
         api_version = 'v1alpha1'
 
+        log.info(f"Watching {crd_name}.{api_group}/{api_version} events")
         try:
-            log.debug(f"Watching {crd_name}.{api_group}/{api_version} events")
             # References:
             # 1. Watchable methods:
             #      https://raw.githubusercontent.com/kubernetes-client/python/v11.0.0/kubernetes/client/api/core_v1_api.py
@@ -43,17 +57,17 @@ def main():
 
                 custom_obj = event['raw_object']
 
-                log.debug(f"{event['type']} {custom_obj['kind']} "
-                          f"ns: {custom_obj['metadata']['namespace']}, "
-                          f"name: {custom_obj['metadata']['name']}")
-
-            log.debug("Watch stream ended unexpectedly. Retrying...")
+                log.info(f"{event['type']} {custom_obj['kind']} "
+                         f"ns: {custom_obj['metadata']['namespace']}, "
+                         f"name: {custom_obj['metadata']['name']}")
         except client.rest.ApiException as err:
             log.error(f"{err.status} {err.reason}")
             wait_in_seconds = 5
             log.error(f"Unable to watch {crd_name}.{api_group}/{api_version} "
                       f"events. Retrying in {wait_in_seconds} secdons")
             time.sleep(wait_in_seconds)
+        else:
+            log.warning("Watch stream ended unexpectedly. Retrying...")
 
 
 if __name__ == "__main__":
