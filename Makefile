@@ -17,15 +17,19 @@ clean-all: clean
 image: .last-docker-push
 
 dev-operator: dependencies
-	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running in dev mode. Run 'make clean' first to uninstall"; echo; exit 1; fi
+	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running. Run 'make clean' first to uninstall"; echo; exit 1; fi
 	microk8s.helm3 install --atomic --set dev=true --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ 2>&1 | tee .last-helm-install
+	@# If .last-helm-install does not contain "Error:", create .last-make-operator-run
 	@grep "Error:" .last-helm-install 1>/dev/null || touch .last-make-operator-run
-	@grep "Error:" .last-helm-install 1>/dev/null && rm .last-helm-install
+	@# If .last-helm-install contains "Error:", delete .last-helm-install and .last-make-operator-run
+	@grep -v "Error:" .last-helm-install 1>/dev/null || rm .last-helm-install .last-make-operator-run
 
 operator: .last-helm-install
 	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running. Run 'make clean' first to uninstall"; echo; exit 1; fi
+	@# If .last-helm-install does not contain "Error:", create .last-make-operator-run
 	@grep "Error:" .last-helm-install 1>/dev/null || touch .last-make-operator-run
-	@grep "Error:" .last-helm-install 1>/dev/null && rm .last-helm-install
+	@# If .last-helm-install contains "Error:", delete .last-helm-install and .last-make-operator-run
+	@grep -v "Error:" .last-helm-install 1>/dev/null || rm .last-helm-install .last-make-operator-run
 
 .last-helm-install: .last-docker-push
 	@if [ -z $(tag) ]; then echo; echo "tag argument is missing. See README for guidance"; echo; exit 1; fi
