@@ -1,4 +1,5 @@
 ---
+{{- if not .Values.dev -}}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -24,3 +25,4 @@ subjects:
 - kind: ServiceAccount
   name: {{ include "prometheus-operator.serviceAccountName" . }}
   namespace: {{ .Chart.Name }}
+{{- end -}}
