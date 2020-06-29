@@ -18,16 +18,18 @@ image: .last-docker-push
 
 dev-operator: dependencies
 	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running in dev mode. Run 'make clean' first to uninstall"; echo; exit 1; fi
-	microk8s.helm3 install --atomic --set dev=true --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ | tee .last-helm-install
-	touch .last-make-operator-run
+	microk8s.helm3 install --atomic --set dev=true --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ 2>&1 | tee .last-helm-install
+	@grep "Error:" .last-helm-install 1>/dev/null || touch .last-make-operator-run
+	@grep "Error:" .last-helm-install 1>/dev/null && rm .last-helm-install
 
 operator: .last-helm-install
 	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running. Run 'make clean' first to uninstall"; echo; exit 1; fi
-	@touch .last-make-operator-run
+	@grep "Error:" .last-helm-install 1>/dev/null || touch .last-make-operator-run
+	@grep "Error:" .last-helm-install 1>/dev/null && rm .last-helm-install
 
 .last-helm-install: .last-docker-push
 	@if [ -z $(tag) ]; then echo; echo "tag argument is missing. See README for guidance"; echo; exit 1; fi
-	microk8s.helm3 install --atomic --set dev=$(dev) --set image.repository=$(tag) --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ | tee .last-helm-install
+	microk8s.helm3 install --atomic --set dev=$(dev) --set image.repository=$(tag) --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ 2>&1 | tee .last-helm-install
 
 .last-docker-push: .last-docker-build
 	docker push $(tag) | tee .last-docker-push
