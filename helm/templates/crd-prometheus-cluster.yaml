@@ -55,11 +55,11 @@ spec:
                 config:
                   type: string
                   description: Raw prometheus configuration file contents. See the official Prometheus documentation at https://prometheus.io/docs/prometheus/latest/configuration/configuration
-                instances:
+                replicas:
                   type: integer
                   default: 1
                   minimum: 1
-                  description: The number of instances you want running
+                  description: The desired number of running pods
       #       status:
       #         type: object
       #         properties:

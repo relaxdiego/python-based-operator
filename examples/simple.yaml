@@ -3,7 +3,7 @@ kind: PrometheusCluster
 metadata:
   name: simple
 spec:
-  instances: 2
+  replicas: 2
   config: |
     global:
       scrape_interval:     15s

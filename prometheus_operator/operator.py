@@ -13,6 +13,9 @@ from kubernetes import (
 from prometheus_operator import (
     logs,
 )
+from prometheus_operator.provisioners import (
+    v1,
+)
 
 
 def main():
@@ -33,7 +36,7 @@ def main():
             sys.exit(1)
 
     log.debug("Loading CustomObjectsApi client")
-    # https://github.com/kubernetes-client/python/blob/master/kubernetes/client/api/apiextensions_v1_api.py
+    # https://github.com/kubernetes-client/python/blob/v11.0.0/kubernetes/client/api/custom_objects_api.py
     coa_client = client.CustomObjectsApi()
 
     while True:
@@ -56,10 +59,15 @@ def main():
                                               version=api_version):
 
                 custom_obj = event['raw_object']
+                event_type = event['type']
+                pco = v1.PrometheuClusterObject(**custom_obj)
+                log.info(f"{event_type} {pco}")
 
-                log.info(f"{event['type']} {custom_obj['kind']} "
-                         f"ns: {custom_obj['metadata']['namespace']}, "
-                         f"name: {custom_obj['metadata']['name']}")
+                if event_type == "ADDED":
+                    v1.create_cluster(pco)
+                else:
+                    log.info("Unhandled event type '{event_type}'")
+
         except client.rest.ApiException as err:
             log.error(f"{err.status} {err.reason}")
             wait_in_seconds = 5
