@@ -5,6 +5,7 @@ not meant for production use.
 
 This project was inspired by https://link.medium.com/rC0Nqcrgw7
 
+See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
 
 ## Dependencies
 
