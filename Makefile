@@ -1,4 +1,4 @@
-.PHONY: clean clean-all image operator dev-operator dependencies
+.PHONY: clean clean-all image operator dev-operator dependencies debug
 .DEFAULT_GOAL := dependencies
 
 CHART_RELEASE_NAME := dev-9095562
@@ -13,6 +13,9 @@ clean:
 
 clean-all: clean
 	rm -f .last-*
+
+debug:
+	microk8s.helm3 install --debug --dry-run ${CHART_RELEASE_NAME} charts/prometheus-operator/ 2>&1 | tee .last-helm-install
 
 dev-operator: dependencies
 	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running. Run 'make clean' first to uninstall"; echo; exit 1; fi

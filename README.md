@@ -190,6 +190,16 @@ microk8s.kubectl create ns prometheus-operator
 make operator tag=localhost:32000/prometheus-operator ns=prometheus-operator
 ```
 
+#### Debugging The Prometheus Operator Helm Chart
+
+Run:
+
+```
+make debug
+```
+
+Checkout stdout for any inaccuracies or errors.
+
 
 #### A Faster Development Workflow
 
