@@ -1,9 +1,8 @@
-# bare-python-prometheus-operator
+# Prometheus Operator (Python Based)
 
 It's a prometheus operator that's built with nothing but Python. This is
-not meant for production use.
-
-This project was inspired by https://link.medium.com/rC0Nqcrgw7
+not meant for production use. This project was inspired by
+https://link.medium.com/rC0Nqcrgw7
 
 See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
 
@@ -45,7 +44,7 @@ NOTE: If you prefer to push your image to a private container repo and
 helm install --atomic \
   --set image.repository=<your-docker-hub-username>/prometheus-operator \
   <name-of-this-prometheus-operator> \
-  helm/
+  charts/prometheus-operator/
 ```
 
 #### Need Some Sample PrometheusCluster manifests?
@@ -105,23 +104,25 @@ make dependencies
 #### When Adding a Development Dependency
 
 ```
-echo 'foo' >> dev-requirements.in
+echo 'foo' >> src/dev-requirements.in
 make dependencies
 ```
 
-The `dev-requirements.txt` file should now be updated. Make sure to commit
-both files to the repo to let your teammates know of the new dependency.
+The `src/dev-requirements.txt` file should now be updated and the `foo`
+package installed in your local machine. Make sure to commit both files
+to the repo to let your teammates know of the new dependency.
 
 ```
-git add dev-requirements.*
-git commit -m "Add foo to dev-requirements.txt"
+git add src/dev-requirements.*
+git commit -m "Add foo to src/dev-requirements.txt"
 git push origin
 ```
 
 
 #### When Adding a Runtime Dependency
 
-Add it to the `install_requires` argument of the `setup()` call. For example:
+Add it to the `install_requires` argument of the `setup()` call in
+`src/setup.py`. For example:
 
 ```
 setup(
@@ -131,8 +132,8 @@ setup(
     ...
 
     install_requires=[
-        'kubernetes',
-        'bar'
+        'kubernetes>=11.0.0,<11.1.0',
+        'bar>=1.0.0,<2.0.0'
     ],
 
     ...
@@ -146,11 +147,12 @@ After having added the `bar` dependency above, run the following:
 make dependencies
 ```
 
-The `requirements.txt` file should now be updated. Make sure to commit
-both files to the repo to let your teammates know of the new dependency.
+The `src/requirements.txt` file should now be updated and the bar package
+installed in your local machine. Make sure to commit both files to the repo
+to let your teammates know of the new dependency.
 
 ```
-git add setup.py requirements.txt
+git add src/setup.py src/requirements.txt
 git commit -m "Add bar as a runtime dependency"
 git push origin
 ```
@@ -167,14 +169,11 @@ microk8s.enable dns helm3 ingress registry storage
 Build and deploy your work to your local microk8s cluster:
 
 ```
-make operator tag=<your-docker-hub-username>/prometheus-operator
+make operator tag=localhost:32000/prometheus-operator
 ```
 
-NOTE: If you prefer to push your image to a private container repo and
-      you have access to one, then feel free use that instead. If you're
-      using microk8s with the registry addon enabled, then you can use
-      tag=localhost:32000/prometheus-operator.
-
+NOTE: The address `localhost:32000` is the address of the microk8s registry
+      addon that we enabled in the previous step.
 
 To uninstall, run:
 
@@ -218,12 +217,12 @@ make dev-operator
 Finally, run the operator locally
 
 ```
-prometheus_operator
+prometheus-operator
 ```
 
-You should see logs starting to stream in to stdout at this point. If you want
+You should see logs starting to stream into stdout at this point. If you want
 to make changes to the python code, make those changes, save them, then kill
-and rerun `prometheus_operator`
+and rerun `prometheus-operator`
 
 To clean up, use the same `make clean` command. Enjoy!
 
