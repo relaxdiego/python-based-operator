@@ -16,7 +16,7 @@ clean-all: clean
 
 dev-operator: dependencies
 	@if [ -f '.last-make-operator-run' ]; then echo; echo "Operator already running. Run 'make clean' first to uninstall"; echo; exit 1; fi
-	microk8s.helm3 install --atomic --set dev=true --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ 2>&1 | tee .last-helm-install
+	microk8s.helm3 install --atomic --set dev=true --namespace=$(namespace) ${CHART_RELEASE_NAME} charts/prometheus-operator/ 2>&1 | tee .last-helm-install
 	@# If .last-helm-install does not contain "Error:", create .last-make-operator-run
 	@grep "Error:" .last-helm-install 1>/dev/null || touch .last-make-operator-run
 	@# If .last-helm-install contains "Error:", delete .last-helm-install and .last-make-operator-run
@@ -31,7 +31,7 @@ operator: .last-helm-install
 
 .last-helm-install: .last-docker-push
 	@if [ -z $(tag) ]; then echo; echo "tag argument is missing. See README for guidance"; echo; exit 1; fi
-	microk8s.helm3 install --atomic --set dev=$(dev) --set image.repository=$(tag) --namespace=$(namespace) ${CHART_RELEASE_NAME} helm/ 2>&1 | tee .last-helm-install
+	microk8s.helm3 install --atomic --set dev=$(dev) --set image.repository=$(tag) --namespace=$(namespace) ${CHART_RELEASE_NAME} charts/prometheus-operator/ 2>&1 | tee .last-helm-install
 
 image: .last-docker-push
 
