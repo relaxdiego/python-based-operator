@@ -9,7 +9,7 @@ certifi==2020.6.20        # via kubernetes, requests
 chardet==3.0.4            # via requests
 google-auth==1.18.0       # via kubernetes
 idna==2.9                 # via requests
-kubernetes==11.0.0        # via prometheus_operator (setup.py)
+kubernetes==11.0.0        # via prometheus-operator (setup.py)
 oauthlib==3.1.0           # via requests-oauthlib
 pyasn1-modules==0.2.8     # via google-auth
 pyasn1==0.4.8             # via pyasn1-modules, rsa

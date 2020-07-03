@@ -13,7 +13,7 @@ if version_info[:3] < minimum_python_version:
     )
 
 
-_NAME = 'prometheus_operator'
+_NAME = 'prometheus-operator'
 setup(
     name=_NAME,
     version='0.1.0',
@@ -30,7 +30,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            '{0} = {0}.operator:main'.format(_NAME),
+            f"{_NAME} = {_NAME.replace('-', '_')}.operator:main",
         ]
     }
 )
