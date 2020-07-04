@@ -191,10 +191,18 @@ make operator tag=localhost:32000/prometheus-operator
 NOTE: The address `localhost:32000` is the address of the microk8s registry
       addon that we enabled in the previous step.
 
+Test it out by creating a PrometheusCluster object:
+
+```
+microk8s.kubectl create ns example
+microk8s.kubectl apply -f examples/simple.yaml -n example
+```
+
 To uninstall, run:
 
 ```
 make clean
+microk8s.kubectl delete ns example && microk8s.kubectl create ns example
 ```
 
 #### Debugging The Prometheus Operator Helm Chart
@@ -241,7 +249,11 @@ You should see logs starting to stream into stdout at this point. If you want
 to make changes to the python code, make those changes, save them, then kill
 and rerun `prometheus-operator`
 
-To clean up, use the same `make clean` command. Enjoy!
+NOTE: Since the operator is running with the admin role in this case, any RBAC
+      changes you make will have no effect. So for debugging RBAC-related issues
+      use `make operator` instead.
+
+To clean up, use the same uninstallation steps above. Enjoy!
 
 
 #### Force Re-Install Depedencies and Uninstall the Operator
