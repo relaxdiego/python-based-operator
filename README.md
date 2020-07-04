@@ -19,6 +19,13 @@ See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
 Use [microk8s](https://microk8s.io/) for testing this operator. It will
 make your life so much easier. Go on, I'll wait!
 
+Once you have microk8s installed, run the following:
+
+```
+microk8s.enable dns rbac ingress registry storage
+mkdir -p ~/.kube
+microk8s.config > ~/.kube/config
+```
 
 ## Usage
 
@@ -26,12 +33,12 @@ make your life so much easier. Go on, I'll wait!
 #### Build the Container Image
 
 ```
-docker build -t <your-docker-hub-username>/prometheus-operator .
-docker push <your-docker-hub-username>/prometheus-operator
+docker build -t localhost:32000/prometheus-operator .
+docker push localhost:32000/prometheus-operator
 ```
 
-NOTE: If you prefer to push your image to a private container repo and
-      you have access to one, then feel free use that instead.
+NOTE: The address `localhost:32000` is the address of the microk8s registry
+      addon that we enabled in the previous step.
 
 
 #### Deploy the Operator
@@ -41,8 +48,8 @@ helm install --atomic prometheus-cluster-crd charts/prometheus-cluster-crd/
 
 helm install --atomic \
   --namespace=operator-framework --create-namespace \
-  --set image.repository=<your-docker-hub-username>/prometheus-operator \
-  <name-of-this-prometheus-operator> \
+  --set image.repository=localhost:32000/prometheus-operator \
+  kicking-the-tires \
   charts/prometheus-operator/
 ```
 
@@ -74,7 +81,7 @@ kubectl apply -f examples/simple.yaml -n example
 #### Clean Up
 
 ```
-helm uninstall <name-of-this-prometheus-operator>
+helm uninstall kicking-the-tires
 helm uninstall prometheus-cluster-crd
 kubectl delete ns example
 ```
