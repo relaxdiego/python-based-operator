@@ -9,19 +9,14 @@ See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
 ## Dependencies
 
 1. Kubernetes 1.18 or higher
-2. Helm 3
-3. Docker CE
+2. Helm 3 (v3.2.4 or higher)
+3. Docker CE (For building the container images)
 4. GNU Make
 
 
-## Make Your Life Easier
+## Just Wanna Kick the Tires a Bit?
 
-If you just want to kick the tires a bit, use [microk8s](https://microk8s.io/)
-to get Kubernetes and Helm 3 up and running in no time!
-
-```
-microk8s.enable helm3
-```
+Use [microk8s](https://microk8s.io/) for testing testing this operator.
 
 
 ## Usage
@@ -41,11 +36,29 @@ NOTE: If you prefer to push your image to a private container repo and
 #### Deploy the Operator
 
 ```
+helm install --atomic prometheus-cluster-crd charts/prometheus-cluster-crd/
+
 helm install --atomic \
+  --namespace=operator-framework --create-namespace \
   --set image.repository=<your-docker-hub-username>/prometheus-operator \
   <name-of-this-prometheus-operator> \
   charts/prometheus-operator/
 ```
+
+#### Why a Separate Chat for the PrometheusCluster CRD?
+
+Because of the current limitations imposed by Helm 3 on CRDs as described
+[here](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#install-a-crd-declaration-before-using-the-resource),
+we are choosing to use Method 2 instead, allowing us to add new versions
+to the CRD as needed.
+
+Also, for development purposes, this makes it easy to clean up the entire
+cluster of all operator-related objects.
+
+Of course, in a production environment, be careful when managing the CRD.
+Most important: don't delete it once it's been created and in use because
+it will also delete the objects based on that CRD.
+
 
 #### Need Some Sample PrometheusCluster manifests?
 
@@ -60,6 +73,7 @@ kubectl apply -f examples/simple.yaml
 
 ```
 helm uninstall <name-of-this-prometheus-operator>
+helm uninstall prometheus-cluster-crd
 ```
 
 
@@ -163,7 +177,7 @@ git push origin
 First, make sure you enable a few important addons:
 
 ```
-microk8s.enable dns helm3 ingress registry storage
+microk8s.enable dns ingress registry storage
 ```
 
 Build and deploy your work to your local microk8s cluster:
