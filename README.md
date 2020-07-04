@@ -193,23 +193,26 @@ microk8s.enable dns rbac ingress registry storage
 Build and deploy your work to your local microk8s cluster:
 
 ```
-make operator tag=localhost:32000/prometheus-operator
+make install tag=localhost:32000/prometheus-operator
 ```
 
 NOTE: The address `localhost:32000` is the address of the microk8s registry
       addon that we enabled in the previous step.
 
-Test it out by creating a PrometheusCluster object:
+
+#### Create Your First Prometheus Cluster
+
+Use one of the example PrometheusCluster manifests:
 
 ```
 microk8s.kubectl create ns example
 microk8s.kubectl apply -f examples/simple.yaml -n example
 ```
 
-To uninstall, run:
+#### Uninstall
 
 ```
-make clean
+make uninstall
 microk8s.kubectl delete ns example && microk8s.kubectl create ns example
 ```
 
@@ -221,7 +224,14 @@ Run:
 make debug
 ```
 
-Checkout stdout for any inaccuracies or errors.
+This prints out the manifests as they would be generated and submitted to k8s.
+Check for any errors and fix them accordingly.
+
+
+#### More Handy Commands in the Makefile
+
+The above make examples are non-exhaustive. Check out the Makefile for more
+info on other available commands.
 
 
 #### A Faster Development Workflow
@@ -244,7 +254,7 @@ microk8s.config > ~/.kube/config
 Next deploy the operator in dev mode:
 
 ```
-make dev-operator
+make install tag=localhost:32000/prometheus-operator dev=true
 ```
 
 Finally, run the operator locally
@@ -259,9 +269,9 @@ and rerun `prometheus-operator`
 
 NOTE: Since the operator is running with the admin role in this case, any RBAC
       changes you make will have no effect. So for debugging RBAC-related issues
-      use `make operator` instead.
+      run `make install` without the dev=true option instead.
 
-To clean up, use the same uninstallation steps above. Enjoy!
+When done, use the usual uninstall method above.
 
 
 #### Force Re-Install Depedencies and Uninstall the Operator
@@ -269,7 +279,7 @@ To clean up, use the same uninstallation steps above. Enjoy!
 Run the following
 
 ```
-make clean-all
+make reset
 make dependencies
 ```
 
