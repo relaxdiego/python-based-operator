@@ -1,17 +1,6 @@
 ---
 {{- if not .Values.dev -}}
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: {{ .Chart.Name }}-clusterrole
-  labels:
-    relaxdiego.com: prometheus-operator
-rules:
-  - apiGroups: ["relaxdiego.com"]
-    resources: ["prometheusclusters"]
-    verbs: ["list"]
----
-apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: {{ .Chart.Name }}-clusterrolebinding

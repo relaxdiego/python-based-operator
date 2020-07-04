@@ -35,6 +35,7 @@ Create chart name and version as used by the chart label.
 
 {{/*
 Common labels
+Reference: https://helm.sh/docs/chart_best_practices/labels/
 */}}
 {{- define "prometheus-operator.labels" -}}
 helm.sh/chart: {{ include "prometheus-operator.chart" . }}
@@ -47,6 +48,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 
 {{/*
 Selector labels
+Reference: https://helm.sh/docs/chart_best_practices/labels/
 */}}
 {{- define "prometheus-operator.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "prometheus-operator.name" . }}
