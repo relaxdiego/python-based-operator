@@ -6,6 +6,7 @@ https://link.medium.com/rC0Nqcrgw7
 
 See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
 
+
 ## Dependencies
 
 1. Kubernetes 1.18 or higher
@@ -38,7 +39,9 @@ docker push localhost:32000/prometheus-operator
 ```
 
 NOTE: The address `localhost:32000` is the address of the microk8s registry
-      addon that we enabled in the previous step.
+      addon that we enabled in the previous step. If you're not using microk8s,
+      just replace that address with either another registry address that you
+      have access to, or your Docker Hub username.
 
 
 #### Deploy the Operator
@@ -47,31 +50,15 @@ NOTE: The address `localhost:32000` is the address of the microk8s registry
 helm install --atomic prometheus-cluster-crd charts/prometheus-cluster-crd/
 
 helm install --atomic \
-  --namespace=operator-framework --create-namespace \
+  --namespace=prometheus-operator --create-namespace \
   --set image.repository=localhost:32000/prometheus-operator \
-  kicking-the-tires \
-  charts/prometheus-operator/
+  test charts/prometheus-operator/
 ```
 
-#### Why a Separate Chat for the PrometheusCluster CRD?
+#### Create Your First Prometheus Cluster
 
-Because of the current limitations imposed by Helm 3 on CRDs as described
-[here](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#install-a-crd-declaration-before-using-the-resource),
-we are choosing to use Method 2 instead, allowing us to add new versions
-to the CRD as needed.
-
-Also, for development purposes, this makes it easy to clean up the entire
-cluster of all operator-related objects.
-
-Of course, in a production environment, be careful when managing the CRD.
-Most important: don't delete it once it's been created and in use because
-it will also delete the objects based on that CRD.
-
-
-#### Need Some Sample PrometheusCluster manifests?
-
-There's some under the `examples/` directory. After deploying the operator,
-create some sample PrometheusClusters via the usual kubectl command:
+There are some under the `examples/` directory. After deploying the operator,
+create a sample Prometheus cluster via the usual kubectl commands:
 
 ```
 kubectl create ns example
@@ -85,6 +72,21 @@ helm uninstall kicking-the-tires
 helm uninstall prometheus-cluster-crd
 kubectl delete ns example
 ```
+
+
+#### Why a Separate Chart for the PrometheusCluster CRD?
+
+Because of the current limitations imposed by Helm 3 on CRDs as described
+[here](https://helm.sh/docs/chart_best_practices/custom_resource_definitions/#install-a-crd-declaration-before-using-the-resource),
+we are choosing to use Method 2 instead, allowing us to add new versions
+to the CRD as needed.
+
+Also, for development purposes, this makes it easy to clean up the entire
+cluster of all operator-related objects.
+
+Of course, in a production environment, be careful when managing the CRD.
+Most important: don't delete it once it's been created and in use because
+it will also delete the objects based on that CRD.
 
 
 ## Development Guide
