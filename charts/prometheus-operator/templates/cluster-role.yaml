@@ -7,7 +7,15 @@ metadata:
   labels:
     relaxdiego.com: prometheus-operator
 rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "services"]
+    verbs: ["get", "create"]
+
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    verbs: ["get", "create"]
+
   - apiGroups: ["relaxdiego.com"]
     resources: ["prometheusclusters"]
-    verbs: ["list"]
+    verbs: ["watch"]
 {{- end -}}

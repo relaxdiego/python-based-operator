@@ -66,7 +66,8 @@ There's some under the `examples/` directory. After deploying the operator,
 create some sample PrometheusClusters via the usual kubectl command:
 
 ```
-kubectl apply -f examples/simple.yaml
+kubectl create ns example
+kubectl apply -f examples/simple.yaml -n example
 ```
 
 #### Clean Up
@@ -74,6 +75,7 @@ kubectl apply -f examples/simple.yaml
 ```
 helm uninstall <name-of-this-prometheus-operator>
 helm uninstall prometheus-cluster-crd
+kubectl delete ns example
 ```
 
 
@@ -177,7 +179,7 @@ git push origin
 First, make sure you enable a few important addons:
 
 ```
-microk8s.enable dns ingress registry storage
+microk8s.enable dns rbac ingress registry storage
 ```
 
 Build and deploy your work to your local microk8s cluster:
@@ -193,15 +195,6 @@ To uninstall, run:
 
 ```
 make clean
-```
-
-You can optionally deploy the operator to its own namespace (recommended).
-For example, if you want to deploy to a namespace named prometheus-operator
-in a microk8s cluster with its registry addon enabled, run:
-
-```
-microk8s.kubectl create ns prometheus-operator
-make operator tag=localhost:32000/prometheus-operator ns=prometheus-operator
 ```
 
 #### Debugging The Prometheus Operator Helm Chart
