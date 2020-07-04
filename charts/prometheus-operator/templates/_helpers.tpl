@@ -49,6 +49,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 Reference: https://helm.sh/docs/chart_best_practices/labels/
+Be careful when modifying this. See https://helm.sh/docs/chart_best_practices/pods/#podtemplates-should-declare-selectors
 */}}
 {{- define "prometheus-operator.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "prometheus-operator.name" . }}
