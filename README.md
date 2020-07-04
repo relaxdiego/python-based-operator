@@ -16,7 +16,8 @@ See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
 
 ## Just Wanna Kick the Tires a Bit?
 
-Use [microk8s](https://microk8s.io/) for testing testing this operator.
+Use [microk8s](https://microk8s.io/) for testing this operator. It will
+make your life so much easier. Go on, I'll wait!
 
 
 ## Usage
