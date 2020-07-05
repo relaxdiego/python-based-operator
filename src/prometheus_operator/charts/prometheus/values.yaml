@@ -8,6 +8,9 @@ image:
   repository: prom/prometheus
   pullPolicy: ifNotPresent
 
+prometheus:
+  config: ""
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""

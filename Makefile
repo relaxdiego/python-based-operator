@@ -81,9 +81,8 @@ upgrade: .last-docker-push
 .last-pip-sync: src/dev-requirements.txt src/requirements.txt
 	cd src && pip-sync dev-requirements.txt requirements.txt | tee ../.last-pip-sync
 
+ifndef dev
 .last-docker-build: Dockerfile LICENSE src/**/* src/requirements.txt src/dev-requirements.txt
-	@(test -n ${tag} && echo "Using image: ${tag}") || \
-	 (echo "The tag argument is missing. See README for guidance" && exit 1)
 	docker build -t ${tag} . 2>&1 | tee .last-docker-build
 	@(grep -E "(Error response from daemon|returned a non-zero code)" .last-docker-build 1>/dev/null && rm -f .last-docker-build && echo "Error building container image" && exit 1) || exit 0
 
@@ -92,6 +91,10 @@ upgrade: .last-docker-push
 	 (echo "The tag argument is missing. See README for guidance" && exit 1)
 	@test -f .last-docker-build || (echo "Last container image build was unsuccessful. Exiting." && exit 1)
 	docker push ${tag} | tee .last-docker-push
+else
+.last-docker-build:
+.last-docker-push:
+endif
 
 src/dev-requirements.txt: src/dev-requirements.in src/requirements.txt
 	cd src && pip-compile dev-requirements.in

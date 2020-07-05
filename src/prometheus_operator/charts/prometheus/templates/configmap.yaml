@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-prometheus-cluster-config
+data:
+  prometheus.yml: |
+{{- /*
+We re-indent the literal block since strip those when parsing the values file(s)
+*/ -}}
+{{ indent 4 .Values.prometheus.config }}

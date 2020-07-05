@@ -34,13 +34,11 @@ def main():
             log.error("Unable to load in-cluster config file. Exiting.")
             sys.exit(1)
 
-    # TODO: Make the choice of which watch method to run customizable via
-    #       CLI args so that we can run multiple containers in a pod each
-    #       watching for different api_versions.
-    watch_for_events(api_version='v1alpha1')
+    api_version = os.environ.get('PROMETHEUS_CLUSTER_CRD_VERSION_TO_WATCH', 'v1alpha1')
+    watch_prometheusclusters(api_version=api_version)
 
 
-def watch_for_events(api_version):
+def watch_prometheusclusters(api_version):
     log = logging.getLogger(__name__)
     log.debug("Loading CustomObjectsApi client")
     # https://github.com/kubernetes-client/python/blob/v11.0.0/kubernetes/client/api/custom_objects_api.py
@@ -62,16 +60,19 @@ def watch_for_events(api_version):
                                       plural=crd_name,
                                       version=api_version):
         custom_obj = event['raw_object']
+        log.debug(f"Received: {custom_obj}")
         event_type = event['type']
 
         if api_version == 'v1alpha1':
-            mod = v1alpha1
+            provisioner = v1alpha1
 
-        pco = mod.PrometheuClusterObject(**custom_obj)
+        pco = provisioner.PrometheuClusterObject(**custom_obj)
         log.info(f"{event_type} {pco}")
 
         if event_type == "ADDED":
-            mod.create_cluster(pco)
+            provisioner.install(pco)
+        elif event_type == "DELETED":
+            provisioner.uninstall(pco)
         else:
             log.info(f"Unhandled event type '{event_type}'")
 
