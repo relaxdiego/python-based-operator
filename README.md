@@ -17,7 +17,7 @@ This was inspired by [this Medium article](https://link.medium.com/rC0Nqcrgw7)
 
 ## Demos
 
-See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
+See the quick (like, just 2 minutes!) demo on [YouTube](https://youtu.be/SASw-mdlaEo).
 
 
 ## Dependencies
