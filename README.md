@@ -28,14 +28,10 @@ mkdir -p ~/.kube
 microk8s.config > ~/.kube/config
 ```
 
-## Usage
-
-
-#### Build the Container Image
+#### Deploy the Operator
 
 ```
-docker build -t localhost:32000/prometheus-operator .
-docker push localhost:32000/prometheus-operator
+make install tag=localhost:32000/prometheus-operator
 ```
 
 NOTE: The address `localhost:32000` is the address of the microk8s registry
@@ -44,32 +40,44 @@ NOTE: The address `localhost:32000` is the address of the microk8s registry
       have access to, or your Docker Hub username.
 
 
-#### Deploy the Operator
-
-```
-helm install --atomic prometheus-cluster-crd charts/prometheus-cluster-crd/
-
-helm install --atomic \
-  --namespace=prometheus-operator --create-namespace \
-  --set image.repository=localhost:32000/prometheus-operator \
-  test charts/prometheus-operator/
-```
-
 #### Create Your First Prometheus Cluster
 
 There are some under the `examples/` directory. After deploying the operator,
 create a sample Prometheus cluster via the usual kubectl commands:
 
 ```
-kubectl create ns example
-kubectl apply -f examples/simple.yaml -n example
+microk8s.kubectl create ns example
+microk8s.kubectl apply -f examples/simple.yaml -n example
 ```
 
-#### Clean Up
+#### Wanna Scale Up Your Prometheus Cluster?
+
+Just run:
 
 ```
-helm uninstall kicking-the-tires
-helm uninstall prometheus-cluster-crd
+microk8s.kubectl edit -f examples/simple.yaml -n example
+```
+
+Go to the `replicas:` field and change its value. Quite, save, then see your
+number of prometheus pods scale accordingly.
+
+
+#### Delete the Prometheus Cluster While Retaining its Data?
+
+Just run:
+
+```
+microk8s.kubectl delete -f examples/simple.yaml -n example
+```
+
+The volumes assocated with the pods will be retained and will be re-attached to
+the correct pod later on if you want to revive them.
+
+
+#### Delete the Operator and Everything in the Example Namespace
+
+```
+make uninstall
 kubectl delete ns example
 ```
 

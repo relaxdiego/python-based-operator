@@ -9,11 +9,16 @@ metadata:
 rules:
   - apiGroups: [""]
     resources: ["configmaps", "services"]
-    verbs: ["get", "create"]
+    verbs: ["get", "create", "delete"]
+
+    # Helm uses secrets to manage release information
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["list", "get", "create", "update", "patch", "delete"]
 
   - apiGroups: ["apps"]
     resources: ["statefulsets"]
-    verbs: ["get", "create"]
+    verbs: ["get", "create", "patch", "delete"]
 
   - apiGroups: ["relaxdiego.com"]
     resources: ["prometheusclusters"]

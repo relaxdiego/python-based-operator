@@ -9,6 +9,8 @@ image:
   pullPolicy: ifNotPresent
 
 prometheus:
+  imageName: 'prom/prometheus'
+  replicas: 1
   config: ""
 
 imagePullSecrets: []

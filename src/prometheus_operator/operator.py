@@ -73,6 +73,8 @@ def watch_prometheusclusters(api_version):
             provisioner.install(pco)
         elif event_type == "DELETED":
             provisioner.uninstall(pco)
+        elif event_type == "MODIFIED":
+            provisioner.upgrade(pco)
         else:
             log.info(f"Unhandled event type '{event_type}'")
 

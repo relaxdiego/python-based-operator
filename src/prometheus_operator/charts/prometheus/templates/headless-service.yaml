@@ -1,0 +1,16 @@
+---
+# Headless service that creates dns records for the backend pods allowing
+# an authorized entity to query <pod-name>.{{ .Release.Name }}.prometheus-cluster-pod-addresses
+# from within the namespace. If accessing from outside the namespace, append
+# 'svc.<namespace-name>.cluster.local'
+# Reference: https://kubernetes.io/docs/concepts/services-networking/service/#headless-services
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-prometheus-cluster-pod-addresses
+  labels:
+    {{- include "prometheus.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "prometheus.selectorLabels" . | nindent 4 }}
+  clusterIP: None

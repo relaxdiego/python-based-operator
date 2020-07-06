@@ -1,0 +1,44 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: simple-prometheus
+spec:
+  replicas: {{ .Values.prometheus.replicas }}
+  selector:
+    matchLabels:
+      {{- include "prometheus.selectorLabels" . | nindent 6 }}
+  serviceName: simple-prometheus-cluster-pod-addresses
+  template:
+    metadata:
+      labels:
+        {{- include "prometheus.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: {{ include "prometheus.imageTag" . }}
+        name: prometheus
+        ports:
+        - containerPort: 9090
+          name: web
+        volumeMounts:
+        - mountPath: /prometheus
+          name: data
+        - mountPath: /etc/prometheus
+          name: prometheus-config
+      terminationGracePeriodSeconds: 10
+      volumes:
+      - configMap:
+          items:
+          - key: prometheus.yml
+            path: prometheus.yml
+          name: {{ .Release.Name }}-prometheus-cluster-config
+        name: prometheus-config
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
