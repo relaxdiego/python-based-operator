@@ -1,8 +1,21 @@
-# Prometheus Operator (Python Based)
+# Prometheus Operator (Python <3 Helm)
 
-It's a prometheus operator that's built with nothing but Python. This is
-not meant for production use. This project was inspired by
-https://link.medium.com/rC0Nqcrgw7
+It's a Proof-of-Concept operator for Prometheus that uses Python to watch
+for certain events and then kicks off certain Helm 3 commands to make things
+happen. I've chosen to take advantage of Helm here since it provides a lot
+of features such as atomic installs, upgrades, and deletions as well as
+deployment history tracking. Something that I would have to write with a
+gazillion lines of code to make happen. Meanwhile, the more important things
+that I REALLY want to implement such as blue/green deployments will fall
+by the wayside. So there.
+
+
+## Credits
+
+This was inspired by [this Medium article](https://link.medium.com/rC0Nqcrgw7)
+
+
+## Demos
 
 See the quick demo on [YouTube](https://youtu.be/RlhLFxOGE_E).
 
@@ -78,7 +91,7 @@ the correct pod later on if you want to revive them.
 
 ```
 make uninstall
-kubectl delete ns example
+microk8s.kubectl delete ns example
 ```
 
 
