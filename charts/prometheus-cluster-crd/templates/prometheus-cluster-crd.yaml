@@ -49,34 +49,19 @@ spec:
             # Here's a starter: https://json-schema.org/learn/getting-started-step-by-step.html
             spec:
               type: object
-              required:
-                - config
               properties:
                 config:
                   type: string
-                  description: Raw prometheus configuration file contents. See the official Prometheus documentation at https://prometheus.io/docs/prometheus/latest/configuration/configuration
+                  default: |
+                    # Reference: https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+                    scrape_configs:
+                      - job_name: 'prometheus'
+                        static_configs:
+                        - targets: ['localhost:9090']
+                  description: Raw prometheus configuration file contents. See the official
+                               Prometheus documentation at https://prometheus.io/docs/prometheus/latest/configuration/configuration
                 replicas:
                   type: integer
-                  default: 1
+                  default: 2
                   minimum: 1
                   description: The desired number of running pods
-      #       status:
-      #         type: object
-      #         properties:
-      #           replicas:
-      #             type: integer
-      #           labelSelector:
-      #             type: string
-      # # subresources describes the subresources for custom resources.
-      # # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#customresourcesubresources-v1-apiextensions-k8s-io
-      # subresources:
-      #   # status enables the status subresource.
-      #   status: {}
-      #   # scale enables the scale subresource.
-      #   scale:
-      #     # specReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Spec.Replicas.
-      #     specReplicasPath: .spec.replicas
-      #     # statusReplicasPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Replicas.
-      #     statusReplicasPath: .status.replicas
-      #     # labelSelectorPath defines the JSONPath inside of a custom resource that corresponds to Scale.Status.Selector.
-      #     labelSelectorPath: .status.labelSelector
