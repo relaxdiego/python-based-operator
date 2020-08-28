@@ -1,23 +1,31 @@
-# Prometheus Operator (Python <3 Helm)
+# A Python-Based k8s Operator
 
-It's a Proof-of-Concept operator for Prometheus that uses Python to watch
-for certain events and then kicks off certain Helm 3 commands to make things
-happen. I've chosen to take advantage of Helm here since it provides a lot
-of features such as atomic installs, upgrades, and deletions as well as
-deployment history tracking. Something that I would have to write with a
-gazillion lines of code to make happen. Meanwhile, the more important things
-that I REALLY want to implement such as blue/green deployments will fall
-by the wayside. So there.
+This project demonstrates how you can use plain Python to create a
+fully-functional k8s operator. To avoid re-inventing the wheel, Helm 3 is
+used internally by the operator to maintain the releases of the
+application it manages.
+
+This operator can manage multiple instances of Prometheus. You can modify
+it to manage other types of applications if you wish. Prometheus was just
+chosen in this case because most engineers in the DevOps space are already
+familiar with it.
+
+You instantiate Prometheus in a namespace by creating a PrometheusCluster
+custom resource in said namespace. A simple instance with defaults can be
+created via the following custom resource:
+
+```yaml
+apiVersion: relaxdiego.com/v1alpha1
+kind: PrometheusCluster
+metadata:
+  name: simple-prometheus-instance
+spec: {}
+```
 
 
-## Credits
+## Prior Art
 
-This was inspired by [this Medium article](https://link.medium.com/rC0Nqcrgw7)
-
-
-## Demos
-
-See the quick (like, just 2 minutes!) demo on [YouTube](https://youtu.be/SASw-mdlaEo).
+Inspired by [this Medium article](https://link.medium.com/rC0Nqcrgw7)
 
 
 ## Dependencies
@@ -28,7 +36,7 @@ See the quick (like, just 2 minutes!) demo on [YouTube](https://youtu.be/SASw-md
 4. GNU Make
 
 
-## Just Wanna Kick the Tires a Bit?
+## Optionally Use Microk8s
 
 Use [microk8s](https://microk8s.io/) for testing this operator. It will
 make your life so much easier. Go on, I'll wait!
@@ -40,6 +48,7 @@ microk8s.enable dns rbac ingress registry storage
 mkdir -p ~/.kube
 microk8s.config > ~/.kube/config
 ```
+
 
 #### Deploy the Operator
 
@@ -55,32 +64,31 @@ NOTE: The address `localhost:32000` is the address of the microk8s registry
 
 #### Create Your First Prometheus Cluster
 
-There are some under the `examples/` directory. After deploying the operator,
-create a sample Prometheus cluster via the usual kubectl commands:
+There are some PrometheusCluster CRDs under the `examples/` directory. After
+deploying the operator, create a sample Prometheus cluster via the usual
+kubectl commands:
 
 ```
-microk8s.kubectl create ns example
-microk8s.kubectl apply -f examples/simple.yaml -n example
+kubectl create ns example
+kubectl apply -f examples/simple.yaml -n example
 ```
 
-#### Wanna Scale Up Your Prometheus Cluster?
-
-Just run:
+#### Scale Up Your Prometheus Cluster
 
 ```
-microk8s.kubectl edit -f examples/simple.yaml -n example
+kubectl edit -f examples/simple.yaml -n example
 ```
 
-Go to the `replicas:` field and change its value. Quite, save, then see your
+Go to the `replicas:` field and change its value. Quit, save, then see your
 number of prometheus pods scale accordingly.
 
 
-#### Delete the Prometheus Cluster While Retaining its Data?
+#### Delete the Prometheus Cluster While Retaining its Data
 
 Just run:
 
 ```
-microk8s.kubectl delete -f examples/simple.yaml -n example
+kubectl delete -f examples/simple.yaml -n example
 ```
 
 The volumes assocated with the pods will be retained and will be re-attached to
@@ -91,7 +99,7 @@ the correct pod later on if you want to revive them.
 
 ```
 make uninstall
-microk8s.kubectl delete ns example
+kubectl delete ns example
 ```
 
 
@@ -120,35 +128,30 @@ it will also delete the objects based on that CRD.
 TIP: Make your life easier by using [pyenv](https://github.com/pyenv/pyenv-installer)
 
 
-#### Prepare Your Virtualenv
+#### Prepare Your Virtualenv (venv style)
 
 ```
 python3 -m venv --prompt prometheus-operator .venv
 source .venv/bin/activate
 ```
 
-TIP: Make your life easier by using [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv):
+#### Prepare Your Virtualenv (pyenv-virtual style)
 
 ```
 pyenv virtualenv 3.8.3 prometheus-operator-3.8.3
 ```
 
+More on [pyenv-virtualenv](https://github.com/pyenv/pyenv-virtualenv):
 
-#### Install Development Dependencies For the First Time
 
-```
-python3 -m pip install --upgrade pip
-python3 -m pip install "pip-tools>=5.2.1,<5.3"
-make dependencies
-```
-
-#### Subsequent Installation of Development Dependencies
+#### Install Development Dependencies
 
 ```
 make dependencies
 ```
 
-#### When Adding a Development Dependency
+
+#### Add a Development Dependency
 
 ```
 echo 'foo' >> src/dev-requirements.in
@@ -166,7 +169,7 @@ git push origin
 ```
 
 
-#### When Adding a Runtime Dependency
+#### Add a Runtime Dependency
 
 Add it to the `install_requires` argument of the `setup()` call in
 `src/setup.py`. For example:
@@ -205,7 +208,7 @@ git push origin
 ```
 
 
-#### Trying Your Changes on Microk8s
+#### Try Your Changes on Microk8s
 
 First, make sure you enable a few important addons:
 

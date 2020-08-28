@@ -20,7 +20,7 @@ debug:
 	@echo "--------------------"
 	helm install --debug --dry-run ${OPERATOR_RELEASE_NAME} charts/prometheus-operator/ 2>&1
 
-dependencies: src/dev-requirements.txt .last-pip-sync
+dependencies: .last-pip-tools-install src/dev-requirements.txt .last-pip-sync
 
 history:
 	@helm history ${CRD_RELEASE_NAME}
@@ -78,8 +78,13 @@ upgrade: .last-docker-push
 		helm upgrade --atomic ${DEV_OPTION} --set image.repository=${tag} --namespace=${ns} ${OPERATOR_RELEASE_NAME} charts/prometheus-operator/) || \
 	 (echo "'${OPERATOR_RELEASE_NAME}' Prometheus Operator not installed in the '${ns}' namespace. Run make 'make install' first." && exit 1)
 
-.last-pip-sync: src/dev-requirements.txt src/requirements.txt
+.last-pip-sync: .last-pip-tools-install src/dev-requirements.txt src/requirements.txt
 	cd src && pip-sync dev-requirements.txt requirements.txt | tee ../.last-pip-sync
+
+.last-pip-tools-install:
+	@(pip-compile --version 1>/dev/null 2>&1 || pip --disable-pip-version-check install "pip-tools>=5.3.0,<5.4" || echo "pip-tools install error") | tee .last-pip-tools-install
+	@(grep "pip-tools install error" .last-pip-tools-install 1>/dev/null 2>&1 && rm -f .last-pip-tools-install && exit 1) || true
+	@pyenv rehash
 
 ifndef dev
 .last-docker-build: Dockerfile LICENSE src/**/* src/requirements.txt src/dev-requirements.txt
@@ -96,8 +101,8 @@ else
 .last-docker-push:
 endif
 
-src/dev-requirements.txt: src/dev-requirements.in src/requirements.txt
-	cd src && pip-compile dev-requirements.in
+src/dev-requirements.txt: .last-pip-tools-install src/dev-requirements.in src/requirements.txt
+	cd src && pip-compile -v dev-requirements.in
 
-src/requirements.txt: src/setup.py
-	cd src && pip-compile
+src/requirements.txt: .last-pip-tools-install src/setup.py
+	cd src && pip-compile -v
