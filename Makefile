@@ -20,7 +20,7 @@ debug:
 	@echo "--------------------"
 	helm install --debug --dry-run ${OPERATOR_RELEASE_NAME} charts/prometheus-operator/ 2>&1
 
-dependencies: .last-pip-tools-install src/dev-requirements.txt .last-pip-sync
+dependencies: .last-pip-tools-install python/requirements-dev.txt .last-pip-sync
 
 history:
 	@helm history ${CRD_RELEASE_NAME}
@@ -78,8 +78,8 @@ upgrade: .last-docker-push
 		helm upgrade --atomic ${DEV_OPTION} --set image.repository=${tag} --namespace=${ns} ${OPERATOR_RELEASE_NAME} charts/prometheus-operator/) || \
 	 (echo "'${OPERATOR_RELEASE_NAME}' Prometheus Operator not installed in the '${ns}' namespace. Run make 'make install' first." && exit 1)
 
-.last-pip-sync: .last-pip-tools-install src/dev-requirements.txt src/requirements.txt
-	cd src && pip-sync dev-requirements.txt requirements.txt | tee ../.last-pip-sync
+.last-pip-sync: .last-pip-tools-install python/requirements-dev.txt python/requirements.txt
+	cd python && pip-sync requirements-dev.txt requirements.txt | tee ../.last-pip-sync
 
 .last-pip-tools-install:
 	@(pip-compile --version 1>/dev/null 2>&1 || pip --disable-pip-version-check install "pip-tools>=5.3.0,<5.4" || echo "pip-tools install error") | tee .last-pip-tools-install
@@ -87,7 +87,7 @@ upgrade: .last-docker-push
 	@pyenv rehash
 
 ifndef dev
-.last-docker-build: Dockerfile LICENSE src/**/* src/requirements.txt src/dev-requirements.txt
+.last-docker-build: Dockerfile LICENSE python/**/* python/requirements.txt python/requirements-dev.txt
 	docker build -t ${tag} . 2>&1 | tee .last-docker-build
 	@(grep -E "(Error response from daemon|returned a non-zero code)" .last-docker-build 1>/dev/null && rm -f .last-docker-build && echo "Error building container image" && exit 1) || exit 0
 
@@ -101,8 +101,8 @@ else
 .last-docker-push:
 endif
 
-src/dev-requirements.txt: .last-pip-tools-install src/dev-requirements.in src/requirements.txt
-	cd src && pip-compile -v dev-requirements.in
+python/requirements-dev.txt: .last-pip-tools-install python/requirements-dev.in python/requirements.txt
+	cd python && CUSTOM_COMPILE_COMMAND="make dependencies" pip-compile -v requirements-dev.in
 
-src/requirements.txt: .last-pip-tools-install src/setup.py
-	cd src && pip-compile -v
+python/requirements.txt: .last-pip-tools-install python/setup.py
+	cd python && CUSTOM_COMPILE_COMMAND="make dependencies" pip-compile -v
