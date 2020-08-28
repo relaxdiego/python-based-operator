@@ -18,10 +18,6 @@ setup(
     name=_NAME,
     version='0.1.0',
     packages=find_packages(),
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Programming Language :: Python :: 3.8',
-    ],
     author='Mark S. Maglana',
     author_email='mark.maglana@linux.com',
     include_package_data=True,
@@ -32,5 +28,11 @@ setup(
         'console_scripts': [
             f"{_NAME} = {_NAME.replace('-', '_')}.operator:main",
         ]
-    }
+    },
+    # https://pypi.org/classifiers/
+    classifiers=[
+        "Programming Language :: Python :: 3.8",
+        "License :: OSI Approved :: Apache Software License",
+        "Operating System :: POSIX :: Linux",
+    ]
 )
