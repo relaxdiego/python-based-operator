@@ -2,13 +2,8 @@
 # what I did in the first iteration of this template but later decided to
 # simplify it for those that are not familiar with Helm.
 # Old style: https://github.com/relaxdiego/python-based-operator/tree/cd0fd5076226cb5aebb548d0160e791ea3046fdb/charts
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: python-based-operator
-  labels:
-    name: python-based-operator
+
+
 ---
 # References
 # 1. Guide:
@@ -77,6 +72,15 @@ spec:
                   default: 1
                   minimum: 1
                   description: The desired number of running pods
+
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: python-based-operator
+  labels:
+    name: python-based-operator
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -85,6 +89,32 @@ metadata:
   namespace: python-based-operator
   labels:
     relaxdiego.com: python-based-operator
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-based-operator
+  namespace: python-based-operator
+  labels:
+    relaxdiego.com: python-based-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: python-based-operator
+  template:
+    metadata:
+      namespace: python-based-operator
+      labels:
+        app.kubernetes.io/name: python-based-operator
+    spec:
+      serviceAccountName: python-based-operator-serviceaccount
+      containers:
+        - name: python-based-operator
+          image: "{{IMAGE_TAG}}:latest"
+          imagePullPolicy: Always
+
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -124,27 +154,3 @@ subjects:
 - kind: ServiceAccount
   name: python-based-operator-serviceaccount
   namespace: python-based-operator
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: python-based-operator
-  namespace: python-based-operator
-  labels:
-    relaxdiego.com: python-based-operator
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: python-based-operator
-  template:
-    metadata:
-      namespace: python-based-operator
-      labels:
-        app.kubernetes.io/name: python-based-operator
-    spec:
-      serviceAccountName: python-based-operator-serviceaccount
-      containers:
-        - name: python-based-operator
-          image: "{{IMAGE_TAG}}:latest"
-          imagePullPolicy: Always
