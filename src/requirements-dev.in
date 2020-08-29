@@ -1,5 +1,5 @@
 # Using workaround from https://github.com/jazzband/pip-tools/issues/204#issuecomment-550051424
--e file:.#egg=prometheus_operator
+-e file:.#egg=python-based-operator
 
 # Use dependency list in requirements.txt to constrain the dependencies that
 # gets resolved when compiling this file.

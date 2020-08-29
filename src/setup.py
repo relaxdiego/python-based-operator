@@ -13,13 +13,13 @@ if version_info[:3] < minimum_python_version:
     )
 
 
-_NAME = 'prometheus-operator'
+_NAME = 'python-based-operator'
 setup(
     name=_NAME,
-    version='0.1.0',
+    version='0.2.0',
     packages=find_packages(),
     author='Mark S. Maglana',
-    author_email='mark.maglana@linux.com',
+    author_email='mmaglana@gmail.com',
     include_package_data=True,
     install_requires=[
         'kubernetes>=11.0.0,<11.1.0',

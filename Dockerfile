@@ -4,14 +4,14 @@
 
 FROM python:3.8.3-alpine3.12 as tester
 
-WORKDIR /prometheus-operator-src
+WORKDIR /operator-src
 
 ADD ./src/ .
 ADD .flake8 .
 
 RUN apk update
 RUN pip install --upgrade pip
-RUN pip install -r dev-requirements.txt
+RUN pip install -r requirements-dev.txt
 
 # TODO: Run unit tests here
 
@@ -23,20 +23,20 @@ RUN pip install -r dev-requirements.txt
 
 FROM python:3.8.3-alpine3.12 as builder
 
-WORKDIR /prometheus-operator-src
+WORKDIR /operator-src
 
-COPY --from=tester /prometheus-operator-src/ .
+COPY --from=tester /operator-src/ .
 
 RUN apk update
 # Reference: https://pythonspeed.com/articles/activate-virtualenv-dockerfile/
-ENV VIRTUAL_ENV=/prometheus-operator
+ENV VIRTUAL_ENV=/operator
 RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 RUN pip install --upgrade pip
 # We are using requirements.txt to constrain the dependency versions to the
 # ones that we have tested with so as the lessen the build and deployment
 # variables and make our deployments more deterministic.
-RUN pip3 install -c requirements.txt .
+RUN pip install -c requirements.txt .
 
 # Install Helm 3
 RUN apk add wget
@@ -53,11 +53,12 @@ FROM python:3.8.3-alpine3.12
 
 # Copy the virtual environment only since it has all that we need and
 # none of the cruft.
-WORKDIR /prometheus-operator
+WORKDIR /operator
 
-COPY --from=builder /prometheus-operator/ .
+COPY --from=builder /operator/ .
 
-ENV VIRTUAL_ENV=/prometheus-operator
+ENV VIRTUAL_ENV=/operator
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-ENTRYPOINT ["prometheus-operator"]
+# This is based on the package name declared in src/setup.py
+ENTRYPOINT ["python-based-operator"]

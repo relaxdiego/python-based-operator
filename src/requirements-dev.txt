@@ -4,14 +4,14 @@
 #
 #    make dependencies
 #
--e file:.#egg=prometheus_operator  # via -r requirements-dev.in
+-e file:.#egg=python-based-operator  # via -r requirements-dev.in
 attrs==19.3.0             # via pytest
 cachetools==4.1.0         # via -c requirements.txt, google-auth
 certifi==2020.6.20        # via -c requirements.txt, kubernetes, requests
 chardet==3.0.4            # via -c requirements.txt, requests
 google-auth==1.18.0       # via -c requirements.txt, kubernetes
 idna==2.9                 # via -c requirements.txt, requests
-kubernetes==11.0.0        # via -c requirements.txt, prometheus-operator
+kubernetes==11.0.0        # via -c requirements.txt, python-based-operator
 more-itertools==8.4.0     # via pytest
 oauthlib==3.1.0           # via -c requirements.txt, requests-oauthlib
 packaging==20.4           # via pytest
