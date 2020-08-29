@@ -74,7 +74,7 @@ spec:
                                Prometheus documentation at https://prometheus.io/docs/prometheus/latest/configuration/configuration
                 replicas:
                   type: integer
-                  default: 2
+                  default: 1
                   minimum: 1
                   description: The desired number of running pods
 ---
