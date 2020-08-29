@@ -24,6 +24,10 @@ metadata:
 spec: {}
 ```
 
+## Demo
+
+Watch it [on YouTube](https://youtu.be/lsuW9XGWosQ).
+
 
 ## Prior Art
 
