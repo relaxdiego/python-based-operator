@@ -78,6 +78,14 @@ spec:
                   minimum: 1
                   description: The desired number of running pods
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: python-based-operator-serviceaccount
+  namespace: python-based-operator
+  labels:
+    relaxdiego.com: python-based-operator
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -116,14 +124,6 @@ subjects:
 - kind: ServiceAccount
   name: python-based-operator-serviceaccount
   namespace: python-based-operator
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: python-based-operator-serviceaccount
-  namespace: python-based-operator
-  labels:
-    relaxdiego.com: python-based-operator
 ---
 apiVersion: apps/v1
 kind: Deployment
