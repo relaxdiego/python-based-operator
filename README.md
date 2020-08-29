@@ -51,6 +51,7 @@ microk8s.config > ~/.kube/config
 kubectl cluster-info
 ```
 
+## Try It Out!
 
 #### Build and Deploy the Operator
 
