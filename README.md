@@ -150,17 +150,17 @@ make dependencies
 #### Add a Development Dependency
 
 ```
-echo 'foo' >> src/dev-requirements.in
+echo 'foo' >> src/requirements-dev.in
 make dependencies
 ```
 
-The `src/dev-requirements.txt` file should now be updated and the `foo`
+The `src/requirements-dev.txt` file should now be updated and the `foo`
 package installed in your local machine. Make sure to commit both files
 to the repo to let your teammates know of the new dependency.
 
 ```
-git add src/dev-requirements.*
-git commit -m "Add foo to src/dev-requirements.txt"
+git add src/requirements-dev.*
+git commit -m "Add foo to src/requirements-dev.txt"
 git push origin
 ```
 
