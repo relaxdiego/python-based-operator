@@ -54,8 +54,8 @@ kubectl cluster-info
 
 #### Build and Deploy the Operator
 
-The following will build the image and deploy it in the current namespace
-configured in your ~/.kube/config file:
+The following will build the image and deploy it in the `python-based-operator`
+namespace.
 
 ```
 make image deploy tag=localhost:32000/python-based-operator
@@ -73,14 +73,15 @@ There are sample PrometheusCluster files under the `examples/` directory. After
 deploying the operator, create a sample Prometheus cluster via kubectl:
 
 ```
-kubectl create ns example
-kubectl apply -f examples/simple.yaml -n example
+kubectl create ns simple-prometheus-cluster
+kubectl config set-context --current --namespace=simple-prometheus-cluster
+kubectl apply -f examples/simple.yaml
 ```
 
 #### Scale Up Your Prometheus Cluster
 
 ```
-kubectl edit -f examples/simple.yaml -n example
+kubectl edit -f examples/simple.yaml
 ```
 
 Go to the `replicas:` field and change its value. Quit, save, then see your
@@ -92,7 +93,7 @@ number of prometheus pods scale accordingly.
 Just run:
 
 ```
-kubectl delete -f examples/simple.yaml -n example
+kubectl delete -f examples/simple.yaml
 ```
 
 The volumes assocated with the pods will be retained and will be re-attached to
@@ -102,8 +103,9 @@ the correct pod later on if you want to revive them.
 #### Delete the Operator and Everything in the Example Namespace
 
 ```
+kubectl delete -f examples/simple.yaml
 make uninstall
-kubectl delete ns example
+kubectl delete ns simple-prometheus-cluster
 ```
 
 
@@ -195,42 +197,6 @@ git add src/setup.py src/requirements.txt
 git commit -m "Add bar as a runtime dependency"
 git push origin
 ```
-
-
-#### A Faster Development Workflow
-
-After some time, it can get very tiring to test your code in a live environment
-by running `make operator ...` then `make clean` then `make operator ...` again
-ad nauseam. This is especially annoying if all you're doing is change one or
-two lines of code in between `make operator` and `make clean`. To make this
-process a little bit easier, there's `make dev-operator`.
-
-To get this to work, first make sure you have your `~/.kube/config` set up properly
-to point to your target cluster. It's best that you use microk8s here to keep
-things easy:
-
-Next deploy the operator in dev mode:
-
-```
-make deploy tag=localhost:32000/python-based-operator dev=true
-```
-
-Finally, run the operator locally
-
-```
-python-based-operator
-```
-
-You should see logs starting to stream into stdout at this point. If you want
-to make changes to the python code, make those changes, save them, then kill
-and rerun `python-based-operator`
-
-NOTE: Since the operator is running with the admin role in this case, any RBAC
-      changes you make will have no effect. So for debugging RBAC-related issues
-      run deploy the operator without the dev=true option instead.
-
-When done, use the usual uninstall method above.
-
 
 #### Force Re-Install Depedencies and Uninstall the Operator
 

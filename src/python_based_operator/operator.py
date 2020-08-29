@@ -9,10 +9,10 @@ from kubernetes import (
     watch,
 )
 
-from prometheus_operator import (
+from python_based_operator import (
     logs,
 )
-from prometheus_operator.provisioners import (
+from python_based_operator.provisioners import (
     v1alpha1,
 )
 

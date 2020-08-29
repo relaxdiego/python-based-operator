@@ -16,9 +16,11 @@ deploy: .last-docker-build .last-docker-push
 
 reset: uninstall
 	@rm -v -f .last-*
-	@test -f .tmp/python-based-operator && kubectl delete -f .tmp/python-based-operator.yml || true
 
-.last-docker-build: Dockerfile LICENSE src/**/* src/requirements.txt src/requirements-dev.txt
+uninstall:
+	@test -f .tmp/python-based-operator.yml && kubectl delete -f .tmp/python-based-operator.yml || true
+
+.last-docker-build: Dockerfile LICENSE src/MANIFEST.in src/**/* src/requirements.txt src/requirements-dev.txt
 	docker build -t ${tag} . 2>&1 | tee .last-docker-build
 	@(grep -E "(Error response from daemon|returned a non-zero code)" .last-docker-build 1>/dev/null && rm -f .last-docker-build && echo "Error building image" && exit 1) || exit 0
 

@@ -1,1 +1,1 @@
-recursive-include operator/charts *
+recursive-include python_based_operator/charts *
