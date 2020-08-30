@@ -21,9 +21,22 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    user_kubeconfig = Path(os.path.expanduser("~")).joinpath('.kube', 'config')
+    load_kube_credentials()
+    api_version = os.environ.get('PROMETHEUS_CLUSTER_CRD_VERSION_TO_WATCH', 'v1alpha1')
+    watch_prometheusclusters(api_version=api_version)
 
-    if user_kubeconfig.exists():
+
+def load_kube_credentials():
+    log.debug("Looking for credentials...")
+    user_kubeconfig = Path(os.path.expanduser("~")).joinpath('.kube', 'config')
+    dev_kubeconfig = Path(__file__).joinpath('..', '..', '..',
+                                             '.tmp', 'serviceaccount',
+                                             'dev_kubeconfig.yml').resolve()
+
+    if dev_kubeconfig.exists():
+        log.debug("Loading from dev kube config")
+        config.load_kube_config(config_file=str(dev_kubeconfig))
+    elif user_kubeconfig.exists():
         log.debug("Loading user kube config")
         config.load_kube_config()
     else:
@@ -33,9 +46,6 @@ def main():
         except config.ConfigException:
             log.error("Unable to load in-cluster config file. Exiting.")
             sys.exit(1)
-
-    api_version = os.environ.get('PROMETHEUS_CLUSTER_CRD_VERSION_TO_WATCH', 'v1alpha1')
-    watch_prometheusclusters(api_version=api_version)
 
 
 def watch_prometheusclusters(api_version):

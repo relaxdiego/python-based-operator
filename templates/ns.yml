@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: python-based-operator
+  labels:
+    name: python-based-operator
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{SERVICEACCOUNT_NAME}}
+  namespace: python-based-operator
+  labels:
+    relaxdiego.com: python-based-operator

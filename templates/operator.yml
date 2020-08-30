@@ -1,0 +1,24 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-based-operator
+  namespace: python-based-operator
+  labels:
+    relaxdiego.com: python-based-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: python-based-operator
+  template:
+    metadata:
+      namespace: python-based-operator
+      labels:
+        app.kubernetes.io/name: python-based-operator
+    spec:
+      serviceAccountName: {{SERVICEACCOUNT_NAME}}
+      containers:
+        - name: python-based-operator
+          image: "{{IMAGE_TAG}}"
+          imagePullPolicy: Always

@@ -1,0 +1,39 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: python-based-operator-clusterrole
+  labels:
+    relaxdiego.com: python-based-operator
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "services"]
+    verbs: ["get", "create", "delete"]
+
+    # This operator uses secrets to manage app release information
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["list", "get", "create", "update", "patch", "delete"]
+
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    verbs: ["get", "create", "patch", "delete"]
+
+  - apiGroups: ["relaxdiego.com"]
+    resources: ["prometheusclusters"]
+    verbs: ["watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: python-based-operator-clusterrolebinding
+  labels:
+    relaxdiego.com: python-based-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: python-based-operator-clusterrole
+subjects:
+- kind: ServiceAccount
+  name: {{SERVICEACCOUNT_NAME}}
+  namespace: python-based-operator

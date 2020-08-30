@@ -203,6 +203,40 @@ git commit -m "Add bar as a runtime dependency"
 git push origin
 ```
 
+#### Run the Operator in Development Mode (Experimental)
+
+This mode speeds up your development workflow by skipping the image creation
+process, opting instead for to deploying it directly on your local machine.
+To achieve a near-production runtime environment, we will create all the
+resources in the k8s cluster except for the Deployment resource. Furthermore
+this mode auto-generates a kubeconfig file from the Service Account we create
+in the cluster so that the operator will still be constrained by the RBAC rules
+that we specify under `templates/rbac.yml`.
+
+In order for Dev mode to work properly, we have to ensure that all runtime
+dependencies are installed locally. This includes [Helm 3](https://helm.sh/docs/intro/install/).
+Make sure to install that before proceeding. You do not need to manually install
+the requirements in `src/requirements.txt` since that will be done for you
+automatically.
+
+When all requirements are satisfied, go ahead and run:
+
+```
+make deploy-dev
+```
+
+You should see something like the following in the terminal:
+
+```
+python_based_operator.operator DEBUG   Looking for credentials...
+python_based_operator.operator DEBUG   Loading from dev kube config
+python_based_operator.operator DEBUG   Loading CustomObjectsApi client
+python_based_operator.operator INFO    Watching prometheusclusters.relaxdiego.com/v1alpha1 events
+```
+
+If you need to make changes to the code, just press `Ctrl-C`, edit the code,
+then run `make deploy-dev` again.
+
 #### Force Re-Install Depedencies and Uninstall the Operator
 
 Run the following
