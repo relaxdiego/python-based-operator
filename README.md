@@ -237,6 +237,9 @@ python_based_operator.operator INFO    Watching prometheusclusters.relaxdiego.co
 If you need to make changes to the code, just press `Ctrl-C`, edit the code,
 then run `make deploy-dev` again.
 
+If you need something more streamlined than this, [Okteto](https://okteto.com/blog/how-to-develop-python-apps-in-kubernetes/)
+might be something of interest to you.
+
 #### Force Re-Install Depedencies and Uninstall the Operator
 
 Run the following
